@@ -33,6 +33,7 @@ public class MicroServer implements MicroTraderServer {
 		ServerComm serverComm = new AnalyticsFilter(new ServerCommImpl());
 		MicroTraderServer server = new MicroServer();
 		server.start(serverComm);
+		//qwerty
 	}
 
 	public static final Logger LOGGER = Logger.getLogger(MicroServer.class.getName());
