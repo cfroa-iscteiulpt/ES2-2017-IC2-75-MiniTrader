@@ -1,5 +1,6 @@
 package mt.server;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,30 +14,18 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import mt.Order;
 import mt.comm.ServerComm;
 import mt.comm.ServerSideMessage;
 import mt.comm.impl.ServerCommImpl;
 import mt.exception.ServerException;
 import mt.filter.AnalyticsFilter;
-import java.io.File;
-import java.io.FileOutputStream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 
 /**
  * MicroTraderServer implementation. This class should be responsible
@@ -243,7 +232,6 @@ public class MicroServer implements MicroTraderServer {
 
 		//save the order on XML file
 		saveOrderXML(o);
-		
 
 		// if is buy order
 		if (o.isBuyOrder()) {
@@ -266,7 +254,12 @@ public class MicroServer implements MicroTraderServer {
 
 	}
 	
-	
+	/**
+	 * Save the received order on the XML file
+	 * 
+	 * @param order
+	 *            the order received from the client
+	 */
 	private void saveOrderXML(Order order) {
 		try {
 			String tipo = "";
@@ -278,8 +271,16 @@ public class MicroServer implements MicroTraderServer {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(inputFile);
-			doc.getDocumentElement().normalize();         
-
+			doc.getDocumentElement().normalize();  
+			
+			// Create new element Order with attributes
+			Element newElement = doc.createElement("Order");
+			newElement.setAttribute("Id", ""+order.getServerOrderID());
+			newElement.setAttribute("Type", tipo);
+			newElement.setAttribute("Stock", order.getStock());
+			newElement.setAttribute("Units", ""+order.getNumberOfUnits());
+			newElement.setAttribute("Price", ""+order.getPricePerUnit());
+			
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}
