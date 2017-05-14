@@ -1,6 +1,7 @@
 package mt.server;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,9 +17,15 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import mt.Order;
 import mt.comm.ServerComm;
@@ -280,6 +287,19 @@ public class MicroServer implements MicroTraderServer {
 			newElement.setAttribute("Stock", order.getStock());
 			newElement.setAttribute("Units", ""+order.getNumberOfUnits());
 			newElement.setAttribute("Price", ""+order.getPricePerUnit());
+			
+			// Add new node to XML document root element
+			System.out.println("----- Adding new element to root element -----");
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());         
+			Node n = doc.getDocumentElement();
+			n.appendChild(newElement);
+			// Save XML document
+			System.out.println("Save XML document.");
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StreamResult result = new StreamResult(new FileOutputStream("XMLLogger.xml"));
+			DOMSource source = new DOMSource(doc);
+			transformer.transform(source, result);
 			
 		} catch (Exception e) {
 			e.printStackTrace(); 
