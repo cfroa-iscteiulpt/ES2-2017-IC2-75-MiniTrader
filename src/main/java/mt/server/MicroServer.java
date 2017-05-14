@@ -116,9 +116,16 @@ public class MicroServer implements MicroTraderServer {
 					try {
 						verifyUserConnected(msg);
 						if(msg.getOrder().getServerOrderID() == EMPTY && msg.getOrder().getNumberOfUnits() >= 10){
-							msg.getOrder().setServerOrderID(id++);
-							notifyAllClients(msg.getOrder());
-							processNewOrder(msg);
+							if(msg.getOrder().isBuyOrder()){
+								msg.getOrder().setServerOrderID(id++);
+								notifyAllClients(msg.getOrder());
+								processNewOrder(msg);
+							}
+							if(msg.getOrder().isSellOrder() && ordersUnfulfilled(msg.getOrder()) < 5){
+								msg.getOrder().setServerOrderID(id++);
+								notifyAllClients(msg.getOrder());
+								processNewOrder(msg);
+							}
 						}
 					} catch (ServerException e) {
 						serverComm.sendError(msg.getSenderNickname(), e.getMessage());
@@ -131,7 +138,28 @@ public class MicroServer implements MicroTraderServer {
 		LOGGER.log(Level.INFO, "Shutting Down Server...");
 	}
 
-
+	/**
+	 * Returns the number of unfulfilled orders for a certain nickname (got from the order)
+	 * 
+	 * @param order
+	 * 			the order trying to be processed
+	 */
+	private int ordersUnfulfilled(Order order) {
+		int unfulfilled = 0;
+		Set<Order> orders = null;
+		for(Entry<String, Set<Order>> entry : orderMap.entrySet()){
+			if(entry.getKey().equals(order.getNickname())) {
+				orders = entry.getValue();
+			}
+		}
+		for (Order o : orders) {
+			if (o.isSellOrder()){
+				unfulfilled++;
+			}
+		}
+		return unfulfilled;
+	}
+	
 	/**
 	 * Verify if user is already connected
 	 * 
