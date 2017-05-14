@@ -1,5 +1,7 @@
 package mt.server;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +14,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import mt.Order;
 import mt.comm.ServerComm;
@@ -221,6 +235,9 @@ public class MicroServer implements MicroTraderServer {
 		
 		// save the order on map
 		saveOrder(o);
+		
+		// save the order on XML file
+		saveOrderXML(o);
 
 		// if is buy order
 		if (o.isBuyOrder()) {
@@ -243,6 +260,24 @@ public class MicroServer implements MicroTraderServer {
 
 	}
 	
+	private void saveOrderXML(Order order) {
+		try {
+			String tipo = "";
+			if(order.isBuyOrder())
+				tipo = "Buy";
+			if(order.isSellOrder())
+				tipo="Sell";
+			File inputFile = new File("XMLLogger.xml");
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(inputFile);
+			doc.getDocumentElement().normalize();  
+			
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
+	}
+
 	/**
 	 * Store the order on map
 	 * 
