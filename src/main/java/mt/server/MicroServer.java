@@ -268,7 +268,8 @@ public class MicroServer implements MicroTraderServer {
 		
 		for (Entry<String, Set<Order>> entry : orderMap.entrySet()) {
 			for (Order o : entry.getValue()) {
-				if (o.isBuyOrder() && o.getStock().equals(sellOrder.getStock()) && o.getPricePerUnit() >= sellOrder.getPricePerUnit()) {
+				if (o.isBuyOrder() && o.getStock().equals(sellOrder.getStock()) && o.getPricePerUnit() >= sellOrder.getPricePerUnit()
+						&& !o.getNickname().equals(sellOrder.getNickname())) {
 					doTransaction (o, sellOrder);
 				}
 			}
