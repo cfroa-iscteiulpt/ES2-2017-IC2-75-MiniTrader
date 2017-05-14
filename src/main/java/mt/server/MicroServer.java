@@ -271,7 +271,16 @@ public class MicroServer implements MicroTraderServer {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(inputFile);
-			doc.getDocumentElement().normalize();  
+			doc.getDocumentElement().normalize(); 
+			
+			// Create new element Order with attributes
+			Element newElement = doc.createElement("Order");
+			newElement.setAttribute("Id", ""+order.getServerOrderID());
+			newElement.setAttribute("Type", tipo);
+			newElement.setAttribute("Stock", order.getStock());
+			newElement.setAttribute("Units", ""+order.getNumberOfUnits());
+			newElement.setAttribute("Price", ""+order.getPricePerUnit());
+			newElement.setAttribute("Nickname", order.getNickname());
 			
 		} catch (Exception e) {
 			e.printStackTrace(); 
