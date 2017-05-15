@@ -273,7 +273,7 @@ public class MicroServer implements MicroTraderServer {
 				tipo = "Buy";
 			if(order.isSellOrder())
 				tipo="Sell";
-			File inputFile = new File("XMLLogger.xml");
+			File inputFile = new File("C:\\XMLLoggerAS.xml");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(inputFile);
@@ -297,7 +297,7 @@ public class MicroServer implements MicroTraderServer {
 			System.out.println("Save XML document.");
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			StreamResult result = new StreamResult(new FileOutputStream("XMLLogger.xml"));
+			StreamResult result = new StreamResult(new FileOutputStream("C:\\XMLLoggerAS.xml"));
 			DOMSource source = new DOMSource(doc);
 			transformer.transform(source, result);
 
